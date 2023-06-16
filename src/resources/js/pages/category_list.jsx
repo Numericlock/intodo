@@ -17,7 +17,7 @@ function CategoryList() {
 
   return (
     <div>
-      <h2>カテゴリー</h2>
+      <h2>Categories</h2>
       <div className='grid gap-2 grid-cols-2'>
         {categories}
       </div>
