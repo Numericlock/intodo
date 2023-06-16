@@ -1,0 +1,33 @@
+version: “3.9”
+services:
+  proxy:
+    container_name: intodo-proxy
+    build: ./docker/nginx
+    ports:
+      - "127.0.0.1:8000:80"
+    volumes:
+      - ./docker/nginx/default.conf:/etc/nginx/conf.d/default.conf
+      - ./src:/usr/share/nginx/html
+  app:
+    container_name: intodo-app
+    build: ./docker/php
+    ports:
+      - 5173:5173
+    volumes:
+      - ./docker/php/php.ini:/usr/local/php/php.ini
+      - ./src:/var/www/html
+  db:
+    container_name: intodo-db
+    build: ./docker/mysql
+    ports:
+      - 127.0.0.1:3307:3307
+    volumes:
+      - ./docker/mysql/my.cnf:/etc/mysql/my.cnf
+      - intodo-db-volume:/var/lib/mysql
+    environment:
+      MYSQL_DATABASE: intodo_db
+      MYSQL_ROOT_PASSWORD: hishida1430_root
+      MYSQL_USER: user
+      MYSQL_PASSWORD: hishida1430
+volumes:
+  intodo-db-volume:
