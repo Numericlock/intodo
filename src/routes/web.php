@@ -18,6 +18,10 @@ Route::get('/', function () {
     return view('welcome');
 });
 
-Route::get('/task/{any}', function () {
+Route::get('/{any}', function () {
     return view('app');
 })->where('any', '.*');
+
+Route::get('/auth', function () {
+    return view('app');
+});

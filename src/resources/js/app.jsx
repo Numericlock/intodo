@@ -9,6 +9,14 @@ import Home from './pages/home';
 import CategoryList from './pages/category_list';
 import TaskList from './pages/task_list';
 import Contact from './pages/contact';
+import Login from './pages/login';
+import Register from "./pages/register";
+
+axios.interceptors.request.use(function(config){
+  const token = localStorage.getItem('auth_token');
+  config.headers.Authorization = token ? `Bearer ${token}` : '';
+  return config;
+});
 
 function App() {
   return (
@@ -45,6 +53,8 @@ function App() {
           }}>
           <BrowserRouter>
             <Routes>
+              <Route path="/login" element={<Login />} />
+              <Route path="/register" element={<Register />} />
               <Route path="/task/index" element={<Home />} />
               <Route path="/task/category" element={<CategoryList />} />
               <Route path="/task/list" element={<TaskList />} />
