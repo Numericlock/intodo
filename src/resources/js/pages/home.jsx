@@ -5,7 +5,7 @@ function Home() {
   return (
     <div>
       <h2 className="mx-11">Home?</h2>
-      <Link to={'/categories'} className="btn btn-primary">aboutへ遷移</Link>
+      <Link to={'/task/category'} className="btn btn-primary">aboutへ遷移</Link>
     </div>
   );
 }

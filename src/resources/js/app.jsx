@@ -45,9 +45,9 @@ function App() {
           }}>
           <BrowserRouter>
             <Routes>
-              <Route path="/" element={<Home />} />
-              <Route path="/categories" element={<CategoryList />} />
-              <Route path="/tasks" element={<TaskList />} />
+              <Route path="/task/index" element={<Home />} />
+              <Route path="/task/category" element={<CategoryList />} />
+              <Route path="/task/list" element={<TaskList />} />
               <Route path="/contact" element={<Contact />} />
             </Routes>
           </BrowserRouter>
