@@ -1,5 +1,5 @@
-import { React, useState } from 'react';
-import {Link} from "react-router-dom";
+import { React, useState, useEffect } from 'react';
+import { useParams } from "react-router-dom";
 import { Checkbox} from '@mantine/core';
 import {
   Tree,
@@ -13,6 +13,20 @@ import TaskAddModal from '../components/task_add_modal';
 function TaskList() {
   const [treeData, setTreeData] = useState(initialData);
   const handleDrop = (newTreeData) => setTreeData(newTreeData);
+  const { categoryId } = useParams();
+
+  useEffect(() => {
+    axios.get(`/api/task`, {
+      headers: {
+        'Authorization': `Bearer ${localStorage.getItem('auth_token')}`,
+      },
+    }).then(res => {
+      if(res.data.status === 200){
+
+        setCategories(res.data.categories);
+      }
+    });
+  }, []);
 
   const addTask= (event, text, parentId) => {
     event.preventDefault();
@@ -52,6 +66,7 @@ function TaskList() {
 
   return (
     <DndProvider backend={MultiBackend} options={getBackendOptions()}>
+      {categoryId}
       <Tree
         tree={treeData}
         rootId={0}
@@ -59,7 +74,8 @@ function TaskList() {
         classes={{
           dropTarget: 'bg-teal-100'
         }}
-        render={(node, { depth, isOpen, onToggle }) => (
+
+        render = {(node, { depth, isOpen, onToggle }) => (
           <div style={{ paddingLeft: depth * 30 }} className='flex flex-row my-2 items-center w-full flex-nowrap'>
             {node.droppable && (
               <span onClick={onToggle}>{

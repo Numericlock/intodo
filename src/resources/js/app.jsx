@@ -8,7 +8,6 @@ import "../css/mantineBase.css";
 import Home from './pages/home';
 import CategoryList from './pages/category_list';
 import TaskList from './pages/task_list';
-import Contact from './pages/contact';
 import Login from './pages/login';
 import Register from "./pages/register";
 import GlobalNav from "./components/global_nav";
@@ -125,9 +124,8 @@ function App() {
                 <Route path="/login" element={<Login />} />
                 <Route path="/register" element={<Register />} />
                 <Route path="/task/index" element={<Home />} />
-                <Route path="/task/category" element={<CategoryList />} />
-                <Route path="/task/list" element={<TaskList />} />
-                <Route path="/contact" element={<Contact />} />
+                <Route path="/category" element={<CategoryList />} />
+                <Route path="/category/:categoryId/task" element={<TaskList />} />
               </Routes>
             </div>
           </div>

@@ -1,26 +1,34 @@
-import React from 'react';
-import {Link} from "react-router-dom";
+import { React, useState, useEffect } from 'react';
 import CategoryTile from '../components/category_tile';
 import NewCategoryTile from '../components/new_category_tile';
 
 function CategoryList() {
-  var categories = []
-  var data = [
-    { route: "/", name: 'Motorcycle', num: 0},
-    { route: "about", name: 'DIY', num: 0 },
-    { route: "about", name: 'Plants', num: 0 },
-    { route: "about", name: 'Camp', num: 0 },
-  ]
+  const [categories, setCategories] = useState(null);
 
-  for(var i in data){
-    categories.push(<CategoryTile to={data[i].route} name={data[i].name} num={data[i].num} key={i}></CategoryTile>);
+  useEffect(() => {
+    axios.get(`/api/category`, {
+      headers: {
+        'Authorization': `Bearer ${localStorage.getItem('auth_token')}`,
+      },
+    }).then(res => {
+      if(res.data.status === 200){
+
+        setCategories(res.data.categories);
+      }
+    });
+  }, []);
+
+  const categoriesData = [];
+
+  for(var i in categories){
+    categoriesData.push(<CategoryTile to={categories[i].id + '/task'} name={categories[i].name} image={categories[i].base_64_image} key={i}></CategoryTile>);
   }
 
   return (
     <div>
       <h2>Categories</h2>
       <div className='grid gap-2 grid-cols-2'>
-        {categories}
+        {categoriesData}
         <NewCategoryTile/>
       </div>
     </div>
