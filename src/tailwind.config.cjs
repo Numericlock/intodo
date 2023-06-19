@@ -14,6 +14,8 @@ export default {
   corePlugins: {
     preflight: false, // リセットCSSの無効化
   },
-  plugins: [],
+  plugins: [
+    require('tailwindcss-hero-patterns'),
+  ],
 }
 

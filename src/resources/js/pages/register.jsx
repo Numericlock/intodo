@@ -1,5 +1,4 @@
 import React, { useState } from "react";
-//import swal from 'sweetalert';
 import { useNavigate } from 'react-router-dom';
 
 function Register() {
@@ -32,8 +31,7 @@ function Register() {
                 if(res.data.status === 200){
                     localStorage.setItem('auth_token', res.data.token);
                     localStorage.setItem('auth_name', res.data.username);
-                    //swal("Success", res.data.message, "success");
-                    history('/')
+                    history('/task/category');
                 } else {
                     setRegister({...registerInput, error_list: res.data.validation_errors});
                 }

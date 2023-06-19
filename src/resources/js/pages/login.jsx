@@ -1,5 +1,4 @@
 import React, { useState } from "react";
-//import swal from "sweetalert";
 import { useNavigate } from 'react-router-dom';
 
 function Login() {
@@ -30,13 +29,9 @@ function Login() {
                 if(res.data.status === 200){
                     localStorage.setItem('auth_token', res.data.token);
                     localStorage.setItem('auth_name', res.data.username);
-                    //swal("ログイン成功", res.data.message, "success");
-                    //history('/');
-                    //location.reload();
-                    console.log("成功");
-                    console.log(res);
+                    history('/task/category');
                 } else if (res.data.status === 401){
-                    //swal("注意", res.data.message, "warning");
+
                 } else {
                     setLogin({...loginInput, error_list: res.data.validation_errors});
                 }
