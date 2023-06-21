@@ -10,7 +10,8 @@ use App\Http\Requests\CategoryRequest;
 
 class CategoryController extends Controller
 {
-	public function index(){
+	public function index()
+	{
 		Log::debug(Auth::id());
 		// カテゴリーを取得
 		$categories = TaskCategory::where('user_id', Auth::id())->get();
@@ -22,26 +23,25 @@ class CategoryController extends Controller
 		]);
 	}
 
-	public function store(CategoryRequest $request){
+	public function store(CategoryRequest $request)
+	{
 		// 画像を保存
 		$dir = 'category/';
 		$imagePath = null;
 		if ($request->hasfile('image')) {
-			'public/' . $dir . basename($request->file('image')->store($dir));
+			$imagePath = $dir . basename($request->file('image')->store($dir));
 		}
 
 		// カテゴリーを登録
 		$category = TaskCategory::create([
 			'user_id' => Auth::id(),
 			'name' => $request->name,
-			'image_path' => $dir . basename($request->file('image')->store($dir)),
+			'image_path' => $imagePath,
 		]);
 
 		return response()->json([
 			'status' => 200,
-			'id' => $category->id,
-			'name' => $category->name,
-			'imagePath' => $category->image_path,
+			'category' => $category,
 			'message' => 'Stored Successfully',
 		]);
 	}

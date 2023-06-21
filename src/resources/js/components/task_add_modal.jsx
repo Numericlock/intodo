@@ -2,6 +2,7 @@ import { useState } from 'react';
 import { useInputState, getHotkeyHandler, useDisclosure } from '@mantine/hooks';
 import { notifications } from '@mantine/notifications';
 import {Modal, Input, Button} from '@mantine/core';
+import { useNavigate } from 'react-router-dom';
 
 const TaskAddModal = (props) => {
   const [opened, { open, close }] = useDisclosure(false);
@@ -12,10 +13,27 @@ const TaskAddModal = (props) => {
       return;
     }
     event.preventDefault();
-    props.addTask(event, textValue, props.parentId);
 
-    close();
-    setTextValue('');
+    // フォームデータを作成
+    const data = new FormData();
+    data.append("parent_id", props.parentId);
+    data.append("category_id", props.categoryId);
+    data.append("text", textValue);
+
+    console.log(props.categoryId);
+    // ToDo を登録
+    axios.post(`/api/task/create`, data, {
+      headers: {
+        'Content-Type': 'multipart/form-data',
+        'Authorization': `Bearer ${localStorage.getItem('auth_token')}`,
+      },
+    }).then(res => {
+      if (res.data.status === 200) {
+        props.addTask(event, res.data.task.text, res.data.task.parent_id);
+        setTextValue('');
+        close();
+      }
+    });
   };
 
 	return (

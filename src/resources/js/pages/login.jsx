@@ -29,7 +29,7 @@ function Login() {
                 if(res.data.status === 200){
                     localStorage.setItem('auth_token', res.data.token);
                     localStorage.setItem('auth_name', res.data.username);
-                    history('/task/category');
+                    history('/category');
                 } else if (res.data.status === 401){
 
                 } else {

@@ -31,7 +31,7 @@ function Register() {
                 if(res.data.status === 200){
                     localStorage.setItem('auth_token', res.data.token);
                     localStorage.setItem('auth_name', res.data.username);
-                    history('/task/category');
+                    history('/category');
                 } else {
                     setRegister({...registerInput, error_list: res.data.validation_errors});
                 }

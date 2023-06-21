@@ -32,14 +32,12 @@ const NewCategoryTile = (props) => {
       return;
     }
 
-    // フォームデータを作成
     const data = new FormData();
     data.append("name", textValue);
     if (file !== null) {
       data.append("image", file);
     }
 
-    // カテゴリーを登録
     axios.post(`/api/category/create`, data, {
       headers: {
         'Content-Type': 'multipart/form-data',
@@ -47,9 +45,9 @@ const NewCategoryTile = (props) => {
       },
     }).then(res => {
       if(res.data.status === 200){
+        props.addCategoryTile(res.data.category);
         clearFile();
         close();
-        history('/task/category');
       }
     });
   };

@@ -18,6 +18,14 @@ function CategoryList() {
     });
   }, []);
 
+  const addCategoryTile = (category) => {
+    setCategories((prevState) => ([ ...prevState, {
+      "id": category.id,
+      "name": category.name,
+      "base_64_image": category.base_64_image,
+    }]));
+  };
+
   const categoriesData = [];
 
   for(var i in categories){
@@ -29,7 +37,7 @@ function CategoryList() {
       <h2>Categories</h2>
       <div className='grid gap-2 grid-cols-2'>
         {categoriesData}
-        <NewCategoryTile/>
+        <NewCategoryTile addCategoryTile={addCategoryTile}/>
       </div>
     </div>
   );
