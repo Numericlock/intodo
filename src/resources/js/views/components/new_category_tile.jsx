@@ -2,7 +2,7 @@ import { React, useState, useEffect } from 'react';
 import { useInputState, getHotkeyHandler, useDisclosure } from '@mantine/hooks';
 import { Modal, Input, Button, FileButton, Group, Text } from '@mantine/core';
 import { useNavigate } from 'react-router-dom';
-import CategoryTile from '../components/category_tile';
+import CategoryTile from './category_tile';
 
 
 const NewCategoryTile = (props) => {

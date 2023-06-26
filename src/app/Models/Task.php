@@ -2,8 +2,8 @@
 
 namespace App\Models;
 
-use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Factories\HasFactory;
 
 class Task extends Model
 {
@@ -14,21 +14,10 @@ class Task extends Model
         'created_at',
     ];
 
-    protected $appends = ['draggable', 'completed'];
-
-
-    /**
-     * Undocumented function
-     *
-     * @return void
-     */
-    public function getDraggableAttribute()
-    {
-        return $this->is_draggable;
-    }
-
-    public function getCompletedAttribute()
-    {
-        return $this->is_completed;
-    }
+    protected $casts = [
+        'is_droppable' => 'boolean',
+        'is_done' => 'boolean',
+        'droppable' => 'boolean',
+        'done' => 'boolean',
+    ];
 }
