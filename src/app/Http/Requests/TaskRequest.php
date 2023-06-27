@@ -22,8 +22,8 @@ class TaskRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'parent_id' => 'required|int',
-            'category_id' => 'required|int',
+            'parent_id' => 'required|numeric',
+            'category_id' => 'required|numeric',
             'text' => 'required|max:60',
             'is_done' => 'boolean',
             'is_droppable' => 'boolean',
