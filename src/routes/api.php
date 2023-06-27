@@ -28,6 +28,7 @@ Route::middleware('auth:sanctum')->group(function() {
     Route::get('task', [TaskController::class, 'index']);
     Route::post('task/create', [TaskController::class, 'store']);
     Route::post('task/done', [TaskController::class, 'done']);
+    Route::post('task/delete', [TaskController::class, 'delete']);
     Route::get('category', [CategoryController::class, 'index']);
     Route::post('category/create', [CategoryController::class, 'store']);
     Route::post('logout', [AuthController::class, 'logout']);

@@ -26,10 +26,6 @@ class TaskController extends Controller
             ->where('category_id', $request->category_id)
             ->get();
 
-
-
-            Log::debug($tasks);
-
 		return response()->json([
 			'status' => 200,
 			'tasks' => $tasks,
@@ -40,15 +36,15 @@ class TaskController extends Controller
 	public function store(TaskRequest $request)
 	{
 		$insertData = [
-				'user_id' => Auth::id(),
-				'category_id' => $request->category_id,
-				'text' => $request->text,
-				'is_droppable' => true,
-				'is_done' => false,
+			'user_id' => Auth::id(),
+			'category_id' => $request->category_id,
+			'text' => $request->text,
+			'is_droppable' => true,
+			'is_done' => false,
 		];
 
 		if ($request->has('parent_id')) {
-				$insertData += ['parent_id' => $request->parent_id];
+			$insertData += ['parent_id' => $request->parent_id];
 		}
 
 		// ToDo を登録
@@ -70,10 +66,6 @@ class TaskController extends Controller
 
 	public function done(DoneTaskRequest $request)
 	{
-		Log::debug('(int) $request->is_done');
-		Log::debug((int) $request->is_done);
-		Log::debug(gettype($request->is_done));
-		Log::debug($request->is_done);
 		// ToDo を更新
 		try {
 			Task::where('id', $request->id)->update(['is_done' => (bool) $request->is_done]);
@@ -89,12 +81,27 @@ class TaskController extends Controller
 			'done' => $task->is_done,
 			'droppable' => $task->is_droppable,
 		];
-		Log::debug($task);
 
 		return response()->json([
 			'status' => 200,
 			'task' => $task,
 			'message' => 'Stored Successfully',
+		]);
+	}
+
+	public function delete(Request $request)
+	{
+		// ToDo を更新
+		try {
+			Task::where('id', $request->id)->delete();
+		} catch (\Exception $e) {
+			report($e);
+		}
+
+		return response()->json([
+			'status' => 200,
+			'id' => $request->id,
+			'message' => 'deleted Successfully',
 		]);
 	}
 }
