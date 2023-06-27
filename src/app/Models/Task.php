@@ -68,15 +68,15 @@ class Task extends Model
       // 親タスクを取得
       $parentTask = $this->where('id', $parentId)->first();
       $position = is_null($parentTask) ? 0 : $parentTask->position;
-      Log::debug($parentTask);
-      Log::debug($position);
 
       // ToDo を登録
+      Log::debug($position + 1);
+      Log::debug($userId);
       $task = $this->create([
         'user_id' => $userId,
         'category_id' => $categoryId,
         'parent_id' => $parentId,
-        'position' => $position,
+        'position' => $position + 1,
         'text' => $text,
         'is_droppable' => true,
         'is_done' => false,
@@ -139,20 +139,24 @@ class Task extends Model
     return $taskId;
   }
 
-  /**
-   * タスクの子孫タスクを全て取得する
-   *
-   * @param integer $taskId
-   * @return integer
-   */
-  public function getProgeny(int $taskId): int
+  public function getDescendant(int $taskId): int
   {
-    try {
-      Task::where('id', $taskId)->delete();
-    } catch (\Exception $e) {
-      report($e);
-    }
+    /*
+    WITH RECURSIVE `cte` AS (
+      SELECT `id`, `text`, `parent_id`
+      FROM `tasks`
+      WHERE `id` = 1
+    UNION ALL
+      SELECT `child_tasks`.`id`,
+             `child_tasks`.`text`,
+             `child_tasks`.`parent_id`
+      FROM `tasks` AS `child_tasks`, `cte`
+      WHERE `cte`.`id` = `child_tasks`.`parent_id`
+    )
+    SELECT count(*) FROM `cte`;
+    */
 
-    return $taskId;
+    return 1;
   }
+
 }

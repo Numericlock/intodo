@@ -32,7 +32,6 @@ class TaskController extends Controller
 
 	public function store(TaskRequest $request)
 	{
-		Log::debug(gettype($request->parent_id));
 		$parentId = (int) $request->parent_id === 0 ? null : (int) $request->parent_id;
 		$task = $this->task->insertTask(Auth::id(), $request->category_id, $request->text, $parentId);
 

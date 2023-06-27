@@ -159,8 +159,6 @@ return [
         /*
          * Package Service Providers...
          */
-        Franzose\ClosureTable\ClosureTableServiceProvider::class,
-
         /*
          * Application Service Providers...
          */

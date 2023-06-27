@@ -19,7 +19,6 @@ class CreateTasksTableMigration extends Migration
             $table->boolean('is_droppable')->default(true);
             $table->timestamps();
 
-            $table->softDeletes();
             $table->foreign('user_id')->references('id')->on('users');
             $table->foreign('category_id')->references('id')->on('task_categories');
             $table->foreign('parent_id')
@@ -27,30 +26,10 @@ class CreateTasksTableMigration extends Migration
                 ->on('tasks')
                 ->onDelete('set null');
         });
-
-        Schema::create('task_closure', function (Blueprint $table) {
-            $table->increments('closure_id');
-
-            $table->integer('ancestor', false, true);
-            $table->integer('descendant', false, true);
-            $table->integer('depth', false, true);
-
-            $table->foreign('ancestor')
-                ->references('id')
-                ->on('tasks')
-                ->onDelete('cascade');
-
-            $table->foreign('descendant')
-                ->references('id')
-                ->on('tasks')
-                ->onDelete('cascade');
-
-        });
     }
 
     public function down()
     {
-        Schema::dropIfExists('task_closure');
         Schema::dropIfExists('tasks');
     }
 }
