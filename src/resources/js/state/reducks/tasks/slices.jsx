@@ -58,7 +58,7 @@ export const deleteTask = createAsyncThunk('tasks/deleteTask', async (data) => {
       return false;
     }
 
-    return res.data;
+    return res.data.id_list;
   });
 });
 
@@ -124,9 +124,18 @@ export const tasksSlice = createSlice({
     [doneTask.fulfilled]: (state, action) => {
       state.loading = false;
       if (action.payload !== false) {
-        const index = state.list.findIndex(({id}) => id === action.payload.id);
-        const newList = state.list;
-        newList[index].done = action.payload.done;
+        let newList = state.list;
+
+        // 更新されたタスクのIDから state のインデックスと特定し、完了有無を更新する
+        action.payload.forEach((payload) => {
+          const index = state.list.findIndex(({id}) => id === payload.id)
+
+          // 検索に引っ掛からなかった場合はスルー
+          if (index !== -1) {
+            newList[index].done = payload.done;
+          }
+        })
+
         state.list = newList;
       }
 
@@ -145,9 +154,12 @@ export const tasksSlice = createSlice({
     [deleteTask.fulfilled]: (state, action) => {
       state.loading = false;
       if (action.payload !== false) {
-        const index = state.list.findIndex(({id}) => Number(id) === Number(action.payload.id));
+        console.log(action.payload);
+        action.payload.forEach((payload) => {
+          const index = state.list.findIndex(({id}) => Number(id) === Number(payload));
 
-        state.list.splice(index, 1);
+          state.list.splice(index, 1);
+        })
       }
 
       console.log('deleted');

@@ -55,11 +55,11 @@ class TaskController extends Controller
 	public function delete(Request $request)
 	{
 		// タスクを削除
-		$deletedTaskId = $this->task->deleteTask($request->id);
+		$deletedTaskIdList = $this->task->deleteTask($request->id);
 
 		return response()->json([
 			'status' => 200,
-			'id' => $deletedTaskId,
+			'id_list' => $deletedTaskIdList,
 		]);
 	}
 }

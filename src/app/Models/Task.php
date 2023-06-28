@@ -3,14 +3,17 @@ namespace App\Models;
 
 use Illuminate\Support\Facades\Log;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Support\Collection as SupportCollection;
 use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
+use Staudenmeir\LaravelAdjacencyList\Eloquent\HasRecursiveRelationships;
 
 use App\Casts\NullCast;
 
 class Task extends Model
 {
   use HasFactory;
+  use HasRecursiveRelationships;
 
   protected $guarded = [
     'id',
@@ -25,6 +28,11 @@ class Task extends Model
     'is_done' => 'boolean',
     'done' => 'boolean',
   ];
+
+  public function recursiveTask()
+  {
+      return $this->hasManyOfDescendantsAndSelf(Task::class);
+  }
 
   /**
    * 特定のカテゴリーのタスクを取得する
@@ -100,63 +108,56 @@ class Task extends Model
    *
    * @param integer $taskId
    * @param boolean $isDone
-   * @return Array
+   * @return Collection
    */
-  public function doneTask(int $taskId, bool $isDone): Array
+  public function doneTask(int $taskId, bool $isDone): Collection
   {
 		try {
-			Task::where('id', $taskId)->update(['is_done' => $isDone]);
-			$task = Task::where('id', $taskId)->first();
+      if ($isDone) {
+        // タスクを完了させる場合
+        $updateTasks = Task::find($taskId)->descendants->pluck('id');
+        $updateTasks->add($taskId);
+      } else {
+        $updateTasks = [$taskId];
+      }
+
+      Task::whereIn('id', $updateTasks)->update(['is_done' => $isDone]);
+
+			$tasks = Task::select(
+        'id',
+        'parent_id as parent',
+        'text',
+        'is_done as done',
+        'is_droppable as droppable',
+      )->whereIn('id', $updateTasks)->get();
+      Log::debug($tasks);
 		} catch (\Exception $e) {
 			report($e);
 		}
 
-		$task = [
-			'id' => $task->id,
-			'parent' => $task->parent_id,
-			'text' => $task->text,
-			'done' => $task->is_done,
-			'droppable' => $task->is_droppable,
-		];
-
-    return $task;
+    return $tasks;
   }
 
   /**
    * タスクを削除する
    *
    * @param integer $taskId
-   * @return integer
+   * @return SupportCollection
    */
-  public function deleteTask(int $taskId): int
+  public function deleteTask(int $taskId): SupportCollection
   {
     try {
-      Task::where('id', $taskId)->delete();
+      // 子孫を取得
+      $deleteTasks = Task::find($taskId)->descendants->pluck('id');
+      $deleteTasks->add($taskId);
+
+      Task::whereIn('id', $deleteTasks)->delete();
     } catch (\Exception $e) {
       report($e);
     }
+    Log::debug($deleteTasks);
 
-    return $taskId;
-  }
-
-  public function getDescendant(int $taskId): int
-  {
-    /*
-    WITH RECURSIVE `cte` AS (
-      SELECT `id`, `text`, `parent_id`
-      FROM `tasks`
-      WHERE `id` = 1
-    UNION ALL
-      SELECT `child_tasks`.`id`,
-             `child_tasks`.`text`,
-             `child_tasks`.`parent_id`
-      FROM `tasks` AS `child_tasks`, `cte`
-      WHERE `cte`.`id` = `child_tasks`.`parent_id`
-    )
-    SELECT count(*) FROM `cte`;
-    */
-
-    return 1;
+    return $deleteTasks;
   }
 
 }
