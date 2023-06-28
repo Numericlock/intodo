@@ -12,7 +12,6 @@ class CategoryController extends Controller
 {
 	public function index()
 	{
-		Log::debug(Auth::id());
 		// カテゴリーを取得
 		$categories = TaskCategory::where('user_id', Auth::id())->get();
 

@@ -70,16 +70,6 @@ export const tasksSlice = createSlice({
     error: false,
     count: 0,
   },
-  reducers: {
-    increase: (state) => {
-      state.count += 1;
-      console.log(state.count);
-    },
-    decrease: (state) => {
-      state.count -= 1;
-      console.log(state.count);
-    },
-  },
   extraReducers: {
     [getTasks.pending]: (state) => {
       console.log('loading');
@@ -171,7 +161,5 @@ export const tasksSlice = createSlice({
     },
   },
 });
-
-export const { increase, decrease } = tasksSlice.actions;
 
 export default tasksSlice.reducer;

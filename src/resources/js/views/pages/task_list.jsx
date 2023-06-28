@@ -10,8 +10,7 @@ import {
 import { DndProvider } from "react-dnd";
 import { unwrapResult } from '@reduxjs/toolkit';
 import TaskAddModal from '../components/addTaskModal';
-import { decrease, increase, getTasks, doneTask, deleteTask } from '../../state/reducks/tasks/slices';
-import initialData from '../../../sample-default.json';
+import { getTasks, doneTask, deleteTask } from '../../state/reducks/tasks/slices';
 
 function TaskList() {
   const handleDrop = (newTaskData) => setTasks(newTaskData);
@@ -85,11 +84,8 @@ function TaskList() {
 
   return (
     <div>
-      <button onClick={() => dispatch(increase())}>Up</button>
-      <button onClick={() => dispatch(decrease())}>Down</button>
     <img />
     <DndProvider backend={MultiBackend} options={getBackendOptions()}>
-      {categoryId}
       <div className="flex justify-end">
         <TaskAddModal parentId={0} categoryId={categoryId} addTask={addTask}/>
       </div>

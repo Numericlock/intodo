@@ -78,8 +78,6 @@ class Task extends Model
       $position = is_null($parentTask) ? 0 : $parentTask->position;
 
       // ToDo を登録
-      Log::debug($position + 1);
-      Log::debug($userId);
       $task = $this->create([
         'user_id' => $userId,
         'category_id' => $categoryId,
@@ -89,7 +87,6 @@ class Task extends Model
         'is_droppable' => true,
         'is_done' => false,
       ]);
-      Log::debug($task);
     } catch (\Exception $e) {
       report($e);
     }
@@ -130,7 +127,6 @@ class Task extends Model
         'is_done as done',
         'is_droppable as droppable',
       )->whereIn('id', $updateTasks)->get();
-      Log::debug($tasks);
 		} catch (\Exception $e) {
 			report($e);
 		}
@@ -155,7 +151,6 @@ class Task extends Model
     } catch (\Exception $e) {
       report($e);
     }
-    Log::debug($deleteTasks);
 
     return $deleteTasks;
   }
