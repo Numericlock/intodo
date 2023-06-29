@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\Api;
 
 use App\Models\Task;
+use App\Models\TaskCategory;
 use Illuminate\Http\Request;
 use App\Http\Requests\TaskRequest;
 use App\Http\Requests\DoneTaskRequest;
@@ -12,11 +13,12 @@ use Illuminate\Support\Facades\Auth;
 
 class TaskController extends Controller
 {
-	private $task;
+	private $task, $category;
 
 	public function __construct()
 	{
 		$this->task = new Task();
+		$this->category = new TaskCategory();
 	}
 
 	public function index(Request $request)

@@ -1,23 +1,20 @@
 import { createSlice, createAsyncThunk } from '@reduxjs/toolkit';
-import { useDispatch } from 'react-redux';
 
-export const getTasks = createAsyncThunk('tasks/getTasks', async (categoryId) => {
-  return await axios.get(`/api/task`, {
-    params: { category_id: categoryId }
-  }, {
+export const getCategories = createAsyncThunk('categories/getCategories', async () => {
+  return await axios.get(`/api/category`, {}, {
     headers: { 'Authorization': `Bearer ${localStorage.getItem('auth_token')}` },
   }).then(res => {
     if (res.data.status !== 200) {
       return;
     }
 
-    return res.data.tasks;
+    return res.data.categories;
   });
 });
 
-export const addTask = createAsyncThunk('tasks/addTask', async (data) => {
-  // ToDo を登録
-  return await axios.post(`/api/task/create`, data, {
+export const addCategory = createAsyncThunk('categories/addCategory', async (data) => {
+  // カテゴリーを登録
+  return await axios.post(`/api/category/create`, data, {
     headers: {
       'Content-Type': 'multipart/form-data',
       'Authorization': `Bearer ${localStorage.getItem('auth_token')}`,
@@ -27,7 +24,7 @@ export const addTask = createAsyncThunk('tasks/addTask', async (data) => {
       return false;
     }
 
-    return res.data.task;
+    return res.data.category;
   });
 });
 
@@ -63,8 +60,8 @@ export const deleteTask = createAsyncThunk('tasks/deleteTask', async (data) => {
   });
 });
 
-export const tasksSlice = createSlice({
-  name: 'tasks',
+export const categoriesSlice = createSlice({
+  name: 'categories',
   initialState: {
     list: [],
     loading: false,
@@ -72,26 +69,26 @@ export const tasksSlice = createSlice({
     count: 0,
   },
   extraReducers: {
-    [getTasks.pending]: (state) => {
+    [getCategories.pending]: (state) => {
       console.log('loading');
       state.loading = true;
     },
-    [getTasks.fulfilled]: (state, action) => {
+    [getCategories.fulfilled]: (state, action) => {
       console.log('loaded');
       state.loading = false;
       state.list = action.payload;
     },
-    [getTasks.rejected]: (state) => {
+    [getCategories.rejected]: (state) => {
       console.log('error');
       state.loading = false;
       state.error = true;
     },
 
-    [addTask.pending]: (state) => {
+    [addCategory.pending]: (state) => {
       console.log('loading');
       state.loading = true;
     },
-    [addTask.fulfilled]: (state, action) => {
+    [addCategory.fulfilled]: (state, action) => {
       console.log('added');
       state.loading = true;
       if (action.payload !== false) {
@@ -102,7 +99,7 @@ export const tasksSlice = createSlice({
         state.list = newList;
       }
     },
-    [addTask.rejected]: (state) => {
+    [addCategory.rejected]: (state) => {
       console.log('error');
       state.loading = false;
       state.error = true;
@@ -163,4 +160,4 @@ export const tasksSlice = createSlice({
   },
 });
 
-export default tasksSlice.reducer;
+export default categoriesSlice.reducer;

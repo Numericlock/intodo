@@ -1,10 +1,11 @@
 import { configureStore } from '@reduxjs/toolkit';
-import thunk from 'redux-thunk';
 import tasksReducer from './reducks/tasks/slices';
+import categoriesReducer from './reducks/categories/slices';
 
 export const store = configureStore({
   reducer: {
     tasks: tasksReducer,
+    categories: categoriesReducer,
   },
 });
 

@@ -1,30 +1,20 @@
 import { React, useState, useEffect } from 'react';
+import { useSelector, useDispatch } from 'react-redux';
 import CategoryTile from '../components/category_tile';
 import NewCategoryTile from '../components/new_category_tile';
+import { getCategories } from '../../state/reducks/categories/slices';
 
 function CategoryList() {
-  const [categories, setCategories] = useState(null);
+  const dispatch = useDispatch();
+
+  const categories = useSelector((state) => state.categories.list);
+  console.log(categories);
 
   useEffect(() => {
-    axios.get(`/api/category`, {
-      headers: {
-        'Authorization': `Bearer ${localStorage.getItem('auth_token')}`,
-      },
-    }).then(res => {
-      if(res.data.status === 200){
-
-        setCategories(res.data.categories);
-      }
-    });
+    if (categories != []) {
+      dispatch(getCategories());
+    }
   }, []);
-
-  const addCategoryTile = (category) => {
-    setCategories((prevState) => ([ ...prevState, {
-      "id": category.id,
-      "name": category.name,
-      "base_64_image": category.base_64_image,
-    }]));
-  };
 
   const categoriesData = [];
 
@@ -37,7 +27,7 @@ function CategoryList() {
       <h2>Categories</h2>
       <div className='grid gap-2 grid-cols-2'>
         {categoriesData}
-        <NewCategoryTile addCategoryTile={addCategoryTile}/>
+        <NewCategoryTile/>
       </div>
     </div>
   );

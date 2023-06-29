@@ -10,15 +10,21 @@ use App\Http\Requests\CategoryRequest;
 
 class CategoryController extends Controller
 {
+	private $category;
+
+	public function __construct()
+	{
+		$this->category = new TaskCategory();
+	}
+
 	public function index()
 	{
 		// カテゴリーを取得
-		$categories = TaskCategory::where('user_id', Auth::id())->get();
+		$categories = $this->category->getCategories(Auth::id());
 
 		return response()->json([
 			'status' => 200,
 			'categories' => $categories,
-			'message' => 'got Successfully',
 		]);
 	}
 
@@ -32,11 +38,7 @@ class CategoryController extends Controller
 		}
 
 		// カテゴリーを登録
-		$category = TaskCategory::create([
-			'user_id' => Auth::id(),
-			'name' => $request->name,
-			'image_path' => $imagePath,
-		]);
+		$category = $this->category->insertCategory(Auth::id(), $request->name, $imagePath);
 
 		return response()->json([
 			'status' => 200,

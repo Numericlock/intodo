@@ -1,8 +1,10 @@
 import { React, useState, useEffect } from 'react';
+import { useDispatch } from 'react-redux'
 import { useInputState, getHotkeyHandler, useDisclosure } from '@mantine/hooks';
 import { Modal, Input, Button, FileButton, Group, Text } from '@mantine/core';
-import { useNavigate } from 'react-router-dom';
 import CategoryTile from './category_tile';
+import { unwrapResult } from '@reduxjs/toolkit';
+import { addCategory } from '../../state/reducks/categories/slices';
 
 
 const NewCategoryTile = (props) => {
@@ -10,8 +12,7 @@ const NewCategoryTile = (props) => {
   const [textValue, setTextValue] = useInputState('');
   const [file, setFile] = useState(null);
   const [preview, setPreview] = useState();
-
-  const history = useNavigate();
+  const dispatch = useDispatch();
 
   const clearFile = () => {
     setFile(null);
@@ -25,7 +26,7 @@ const NewCategoryTile = (props) => {
     }
   }, [file]);
 
-  const addCategory = (event) => {
+  const handleAddButton = async (event) => {
     event.preventDefault();
 
     if (textValue === '') {
@@ -38,18 +39,19 @@ const NewCategoryTile = (props) => {
       data.append("image", file);
     }
 
-    axios.post(`/api/category/create`, data, {
-      headers: {
-        'Content-Type': 'multipart/form-data',
-        'Authorization': `Bearer ${localStorage.getItem('auth_token')}`,
-      },
-    }).then(res => {
-      if(res.data.status === 200){
-        props.addCategoryTile(res.data.category);
+    try {
+      const result = await dispatch(addCategory(data));
+
+      if (unwrapResult(result) !== false) {
         clearFile();
+        setTextValue('');
         close();
+      } else {
+        console.error('Failed to add the category');
       }
-    });
+    } catch (err) {
+      console.error('Failed to save the category: ', err)
+    }
   };
 
 	return (
@@ -99,7 +101,7 @@ const NewCategoryTile = (props) => {
             <Text>Preview</Text>
             <CategoryTile image={preview} name={textValue} num={0}></CategoryTile>
           </div>
-          <Button className='my-2' color="cyan" onClick={(event)=>addCategory(event)} disabled={textValue === ''}>
+          <Button className='my-2' color="cyan" onClick={(event)=>handleAddButton(event)} disabled={textValue === ''}>
             Add
           </Button>
         </div>
