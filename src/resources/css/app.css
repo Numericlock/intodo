@@ -1,3 +1,4 @@
+@import url('https://fonts.googleapis.com/css?family=Maven+Pro:500,700&display=swap');
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
@@ -5,16 +6,57 @@
 @layer components {
   .glass {
     background: rgba( 166, 166, 166, 0 );
-    box-shadow: 0 8px 32px 0 rgba( 31, 38, 135, 0.37 );
+    box-shadow: 0 4px 16px 0 rgba( 31, 38, 135, 0.37 );
     backdrop-filter: blur( 3px );
     -webkit-backdrop-filter: blur( 3px );
     border: 1px solid rgba( 255, 255, 255, 0.18 );
   }
+
   .glass-white {
-    background: rgba( 255, 255, 255, 0.45 );
-    box-shadow: 0 8px 32px 0 rgba( 31, 38, 135, 0.37 );
-    backdrop-filter: blur( 1px );
-    -webkit-backdrop-filter: blur( 1px );
+    background: rgba( 255, 255, 255, 0.2 );
+    box-shadow: 0 4px 16px 0 rgba( 31, 38, 135, 0.37 );
+    backdrop-filter: blur( 1.5px );
+    -webkit-backdrop-filter: blur( 1.5px );
     border: 1px solid rgba( 255, 255, 255, 0.18 );
+  }
+
+  .glass-black {
+    background: rgba( 57, 57, 57, 0.25 );
+    box-shadow: 0 4px 16px 0 rgba( 31, 38, 135, 0.37 );
+    backdrop-filter: blur( 4px );
+    -webkit-backdrop-filter: blur( 4px );
+    border: 1px solid rgba( 255, 255, 255, 0.18 );
+  }
+  
+  .glass-teal {
+    background: rgba( 178, 245, 234, 0.25 );
+    box-shadow: 0 4px 16px 0 rgba( 31, 38, 135, 0.37 );
+    backdrop-filter: blur( 4px );
+    -webkit-backdrop-filter: blur( 4px );
+    border: 1px solid rgba( 255, 255, 255, 0.18 );
+  }
+
+  .font-maven {
+    font-family: 'Maven Pro', sans-serif;
+  }
+
+  .shadow-3xl {
+    box-shadow: 0 0 5px rgba(0,0,0,0.5);
+  }
+
+  .rotate-360 {
+    transform: rotate(360deg);
+  }
+
+  .neu-glass {
+    border-radius: 50px;
+    background: #a6a6a6;
+    box-shadow:  20px 20px 60px #8d8d8d, -20px -20px 60px #bfbfbf;
+  }
+
+  .neu-glass-white {
+    border-radius: 50px;
+    background: #ffffff;
+    box-shadow:  20px 20px 60px #d9d9d9, -20px -20px 60px #ffffff;
   }
 }

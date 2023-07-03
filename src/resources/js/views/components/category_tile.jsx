@@ -3,7 +3,7 @@ import {Link} from "react-router-dom";
 const CategoryTile = (props) => {
 
 	return (
-		<Link to={props.to} className="m-4 glass rounded-lg flex flex-col w-52 h-52 hover:glass-white hover:scale-105 duration-100">
+		<Link to={props.to} className="m-4 glass-white rounded-lg flex flex-col w-52 h-52 duration-100">
 			<div>
 				{(props.image)
 					? <img src={props.image} className="h-20 w-full rounded-t-lg object-cover"/>

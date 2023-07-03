@@ -10,6 +10,7 @@ import { addCategory } from '../../state/reducks/categories/slices';
 const NewCategoryTile = (props) => {
   const [opened, { open, close }] = useDisclosure(false);
   const [textValue, setTextValue] = useInputState('');
+  const [isSubmittable, setIsSubmittable] = useInputState(true);
   const [file, setFile] = useState(null);
   const [preview, setPreview] = useState();
   const dispatch = useDispatch();
@@ -29,9 +30,10 @@ const NewCategoryTile = (props) => {
   const handleAddButton = async (event) => {
     event.preventDefault();
 
-    if (textValue === '') {
+    if (textValue === '' || !isSubmittable) {
       return;
     }
+    setIsSubmittable(false);
 
     const data = new FormData();
     data.append("name", textValue);
@@ -45,6 +47,7 @@ const NewCategoryTile = (props) => {
       if (unwrapResult(result) !== false) {
         clearFile();
         setTextValue('');
+        setIsSubmittable(true);
         close();
       } else {
         console.error('Failed to add the category');
@@ -56,11 +59,13 @@ const NewCategoryTile = (props) => {
 
 	return (
     <>
-      <div onClick={open} className="m-4 w-52 flex items-center justify-center">
-        <div className="glass text-neutral-400 rounded-full flex items-center justify-center w-28 h-28 hover:glass-white hover:scale-105 hover:text-neutral-500 duration-200">
-          <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="w-20 h-20">
-            <path strokeLinecap="round" strokeLinejoin="round" d="M12 4.5v15m7.5-7.5h-15" />
-          </svg>
+      <div className="m-4 w-52 flex items-center justify-center">
+        <div onClick={open} className="glass-white text-neutral-500 rounded-full flex items-center justify-center w-28 h-28 duration-200 cursor-pointer">
+          <div className='hover:rotate-360'>
+            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="w-20 h-20">
+              <path strokeLinecap="round" strokeLinejoin="round" d="M12 4.5v15m7.5-7.5h-15" />
+            </svg>
+          </div>
         </div>
       </div>
       <Modal
