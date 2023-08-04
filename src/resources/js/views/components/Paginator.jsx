@@ -8,8 +8,7 @@ const Pagination = (props) => {
   // ページクリック時のイベント
   const handlePaginate = (selectedPage) => {
     // selectedPage.selectedには、ページ番号 - 1が入る
-    const page = selectedPage.selected * pageItems;
-    setStartNumber(page);
+    setStartNumber(selectedPage.selected);
     history.pushState({}, '', `?page=${selectedPage.selected + 1}`);
   }
 

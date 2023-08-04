@@ -6,9 +6,8 @@ import Paginator from '../components/Paginator';
 import NewCategoryTile from '../components/new_category_tile';
 
 function CategoryList() {
-  const [startNumber, setStartNumber] = useState(0);
   const query = new URLSearchParams(useLocation().search);
-  const page = Number(query.get('page')) ?? 1;
+  const [startNumber, setStartNumber] = useState(Number(query.get('page')) - 1 ?? 0);
 
   const { isLoading, data, isError, error } = useQuery({ queryKey: ['categories'], queryFn: () => {
     return axios.get(`/api/category`, {}, {
@@ -24,13 +23,16 @@ function CategoryList() {
     return <h2>{error.message}</h2>;
   }
 
-  const categories = data.data.categories;
+  // １ページに表示するアイテム数
   const pageItemNumber = 3;
-  const categoriesData = [];
+  // カテゴリーリストのデータ
+  const categories = data.data.categories;
+  // カテゴリータイルの要素
+  const categoryElements = [];
 
   if (categories.length) {
     for (var i = 0; i < pageItemNumber; i++) {
-      const index = startNumber + i;
+      const index = startNumber * pageItemNumber + i;
 
       // 存在しない要素の場合
       const category = categories[index];
@@ -38,7 +40,7 @@ function CategoryList() {
         break;
       }
 
-      categoriesData.push(
+      categoryElements.push(
         <CategoryTile to={category.id + '/task'} num={category.tasks_count} name={category.name}
           image={category.base_64_image} key={index}>
         </CategoryTile>
@@ -50,14 +52,14 @@ function CategoryList() {
     <div>
       <h2>Categories</h2>
       <div className='grid gap-2 grid-cols-2'>
-        {categoriesData}
+        {categoryElements}
         <NewCategoryTile/>
       </div>
       <Paginator
         dataCounts={categories.length}
         setStartNumber={setStartNumber}
         pageItems={pageItemNumber}
-        currentPage={page}
+        currentPage={startNumber}
       />
     </div>
   );
