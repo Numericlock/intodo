@@ -1,27 +1,31 @@
 import { React, useState, useEffect } from 'react';
-import { useSelector, useDispatch } from 'react-redux';
+import { useQuery } from '@tanstack/react-query';
 import { useLocation } from "react-router-dom";
 import CategoryTile from '../components/category_tile';
 import Paginator from '../components/Paginator';
 import NewCategoryTile from '../components/new_category_tile';
-import { getCategories } from '../../state/reducks/categories/slices';
 
 function CategoryList() {
   const [startNumber, setStartNumber] = useState(0);
-  const dispatch = useDispatch();
   const query = new URLSearchParams(useLocation().search);
   const page = Number(query.get('page')) ?? 1;
 
-  const categories = useSelector((state) => state.categories.list);
-  console.log(categories);
+  const { isLoading, data, isError, error } = useQuery({ queryKey: ['categories'], queryFn: () => {
+    return axios.get(`/api/category`, {}, {
+      headers: { 'Authorization': `Bearer ${localStorage.getItem('auth_token')}` },
+    });
+  }})
+
+  if (isLoading) {
+    return <h2>Loading...</h2>;
+  }
+
+  if (isError) {
+    return <h2>{error.message}</h2>;
+  }
+
+  const categories = data.data.categories;
   const pageItemNumber = 3;
-
-  useEffect(() => {
-    if (categories != []) {
-      dispatch(getCategories());
-    }
-  }, []);
-
   const categoriesData = [];
 
   if (categories.length) {
@@ -29,15 +33,16 @@ function CategoryList() {
       const index = startNumber + i;
 
       // 存在しない要素の場合
-      console.log(categories.includes(index));
       const category = categories[index];
       if (!category) {
-        console.log('index');
-        console.log(index);
         break;
       }
 
-      categoriesData.push(<CategoryTile to={category.id + '/task'} num={category.tasks_count} name={category.name} image={category.base_64_image} key={index}></CategoryTile>);
+      categoriesData.push(
+        <CategoryTile to={category.id + '/task'} num={category.tasks_count} name={category.name}
+          image={category.base_64_image} key={index}>
+        </CategoryTile>
+      );
     }
   }
 
