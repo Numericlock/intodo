@@ -1,4 +1,5 @@
 import { React, useState, useEffect } from 'react';
+import { useMutation } from '@tanstack/react-query';
 import { useDispatch } from 'react-redux'
 import { useInputState, getHotkeyHandler, useDisclosure } from '@mantine/hooks';
 import { Modal, Input, Button, FileButton, Group, Text } from '@mantine/core';
@@ -27,8 +28,23 @@ const NewCategoryTile = (props) => {
     }
   }, [file]);
 
+  // カテゴリーを登録
+  const addCategory = (data) => {
+    return axios.post(`/api/category/create`, data, {
+      headers: {
+        'Content-Type': 'multipart/form-data',
+        'Authorization': `Bearer ${localStorage.getItem('auth_token')}`,
+      },
+    })
+  };
+
+  const useAddCategory = () => {
+    return useMutation(addCategory);
+  };
+
+  const { mutate } = useAddCategory();
+
   const handleAddButton = async (event) => {
-    event.preventDefault();
 
     if (textValue === '' || !isSubmittable) {
       return;
@@ -41,20 +57,23 @@ const NewCategoryTile = (props) => {
       data.append("image", file);
     }
 
-    try {
-      const result = await dispatch(addCategory(data));
-
-      if (unwrapResult(result) !== false) {
+    mutate(data, {
+      onSuccess: (data) => {
+        console.log("Success");
         clearFile();
         setTextValue('');
         setIsSubmittable(true);
         close();
-      } else {
-        console.error('Failed to add the category');
-      }
-    } catch (err) {
-      console.error('Failed to save the category: ', err)
-    }
+        /*
+        queryClient.setQueryData('todos', (old) => {
+          return {
+            ...old
+            [...old.data, ...data],
+          };
+        });
+        */
+      },
+    });
   };
 
 	return (
