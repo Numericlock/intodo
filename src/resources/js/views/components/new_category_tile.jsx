@@ -1,12 +1,8 @@
 import { React, useState, useEffect } from 'react';
-import { useMutation } from '@tanstack/react-query';
-import { useDispatch } from 'react-redux'
+import { useMutation, useQueryClient } from '@tanstack/react-query';
 import { useInputState, getHotkeyHandler, useDisclosure } from '@mantine/hooks';
 import { Modal, Input, Button, FileButton, Group, Text } from '@mantine/core';
 import CategoryTile from './category_tile';
-import { unwrapResult } from '@reduxjs/toolkit';
-import { addCategory } from '../../state/reducks/categories/slices';
-
 
 const NewCategoryTile = (props) => {
   const [opened, { open, close }] = useDisclosure(false);
@@ -14,7 +10,6 @@ const NewCategoryTile = (props) => {
   const [isSubmittable, setIsSubmittable] = useInputState(true);
   const [file, setFile] = useState(null);
   const [preview, setPreview] = useState();
-  const dispatch = useDispatch();
 
   const clearFile = () => {
     setFile(null);
@@ -38,6 +33,8 @@ const NewCategoryTile = (props) => {
     })
   };
 
+  const queryClient = useQueryClient();
+
   const useAddCategory = () => {
     return useMutation(addCategory);
   };
@@ -60,18 +57,13 @@ const NewCategoryTile = (props) => {
     mutate(data, {
       onSuccess: (data) => {
         console.log("Success");
+        queryClient.invalidateQueries(['categories']);
         clearFile();
         setTextValue('');
         setIsSubmittable(true);
         close();
-        /*
-        queryClient.setQueryData('todos', (old) => {
-          return {
-            ...old
-            [...old.data, ...data],
-          };
-        });
-        */
+        console.log(data.data.category);
+        //queryClient.setQueryData('categories', (old) => [...old, data.data.category]);
       },
     });
   };

@@ -17,11 +17,13 @@ function CategoryList() {
   }
 
   const [startNumber, setStartNumber] = useState(initialPage);
-  const { isLoading, data, isError, error } = useQuery({ queryKey: ['categories'], queryFn: () => {
-    return axios.get(`/api/category`, {}, {
+  const { isLoading, data, isError, error } = useQuery({ queryKey: ['categories'], queryFn: async () => {
+    const response = await axios.get(`/api/category`, {}, {
       headers: { 'Authorization': `Bearer ${localStorage.getItem('auth_token')}` },
     });
-  }})
+
+    return response.data.categories;
+  }});
 
   if (isLoading) {
     return <h2>Loading...</h2>;
@@ -33,17 +35,15 @@ function CategoryList() {
 
   // １ページに表示するアイテム数
   const pageItemNumber = 3;
-  // カテゴリーリストのデータ
-  const categories = data.data.categories;
   // カテゴリータイルの要素
   const categoryElements = [];
 
-  if (categories.length) {
+  if (data.length) {
     for (var i = 0; i < pageItemNumber; i++) {
       const index = startNumber * pageItemNumber + i;
 
       // 存在しない要素の場合
-      const category = categories[index];
+      const category = data[index];
       if (!category) {
         break;
       }
@@ -64,7 +64,7 @@ function CategoryList() {
         <NewCategoryTile/>
       </div>
       <Paginator
-        dataCounts={categories.length}
+        dataCounts={data.length}
         setStartNumber={setStartNumber}
         pageItems={pageItemNumber}
         currentPage={startNumber}
