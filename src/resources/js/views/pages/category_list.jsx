@@ -8,11 +8,11 @@ import NewCategoryTile from '../components/new_category_tile';
 function CategoryList() {
   const query = new URLSearchParams(useLocation().search);
   const initialPage = () => {
-    const pageParam = Number(query.get('page')) ?? 0;
+    let pageParam = Number(query.get('page')) ?? 0;
     if (pageParam !== 0) {
-      pageParam - 1;
-    } 
-    
+      pageParam--;
+    }
+
     return pageParam;
   }
 
@@ -32,6 +32,7 @@ function CategoryList() {
   if (isError) {
     return <h2>{error.message}</h2>;
   }
+  console.log('startNumber: ' + startNumber);
 
   // １ページに表示するアイテム数
   const pageItemNumber = 3;
