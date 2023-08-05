@@ -7,8 +7,16 @@ import NewCategoryTile from '../components/new_category_tile';
 
 function CategoryList() {
   const query = new URLSearchParams(useLocation().search);
-  const [startNumber, setStartNumber] = useState(Number(query.get('page')) - 1 ?? 0);
+  const initialPage = () => {
+    const pageParam = Number(query.get('page')) ?? 0;
+    if (pageParam !== 0) {
+      pageParam - 1;
+    } 
+    
+    return pageParam;
+  }
 
+  const [startNumber, setStartNumber] = useState(initialPage);
   const { isLoading, data, isError, error } = useQuery({ queryKey: ['categories'], queryFn: () => {
     return axios.get(`/api/category`, {}, {
       headers: { 'Authorization': `Bearer ${localStorage.getItem('auth_token')}` },
