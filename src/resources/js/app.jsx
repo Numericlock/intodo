@@ -129,8 +129,8 @@ function App() {
           >
             <BrowserRouter>
               <GlobalNav></GlobalNav>
-              <div className="flex items-center bg-gradient-to-br from-[#C6FFDD] via-[#FBD786] to-[#f7797d] h-screen">
-                <div className="m-auto max-h-screen min-w-[420px] max-w-4xl p-6 glass-white rounded-lg">
+              <div className="flex items-center bg-gradient-to-br from-[#C6FFDD] via-[#FBD786] to-[#f7797d] min-h-screen">
+                <div className="m-auto min-w-[420px] max-w-4xl p-6 glass-white rounded-lg">
                   <Routes>
                     <Route path="/login" element={<Login />} />
                     <Route path="/register" element={<Register />} />

@@ -56,14 +56,12 @@ const NewCategoryTile = (props) => {
 
     mutate(data, {
       onSuccess: (data) => {
-        console.log("Success");
+        console.log("Success add Category");
         queryClient.invalidateQueries(['categories']);
+        close();
         clearFile();
         setTextValue('');
         setIsSubmittable(true);
-        close();
-        console.log(data.data.category);
-        //queryClient.setQueryData('categories', (old) => [...old, data.data.category]);
       },
     });
   };

@@ -32,10 +32,9 @@ function CategoryList() {
   if (isError) {
     return <h2>{error.message}</h2>;
   }
-  console.log('startNumber: ' + startNumber);
 
   // １ページに表示するアイテム数
-  const pageItemNumber = 3;
+  const pageItemNumber = 7;
   // カテゴリータイルの要素
   const categoryElements = [];
 

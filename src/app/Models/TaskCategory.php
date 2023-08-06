@@ -73,12 +73,13 @@ class TaskCategory extends Model
      * 特定のカテゴリーを取得する
      *
      * @param int $categoryId
+     * @param int $userId
      * @return Collection
      */
-    public function getCategory(int $categoryId): Collection
+    public function getCategory(int $categoryId, int $userId): Collection
     {
         try {
-            $category = $this->where('id', $categoryId)->first();
+            $category = $this->where('id', $categoryId)->where('user_id', $userId)->first();
         } catch (\Exception $e) {
             report($e);
         }

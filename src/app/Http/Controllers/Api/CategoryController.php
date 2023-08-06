@@ -7,6 +7,7 @@ use Illuminate\Support\Facades\Log;
 use App\Http\Controllers\Controller;
 use Illuminate\Support\Facades\Auth;
 use App\Http\Requests\CategoryRequest;
+use Illuminate\Support\Facades\Request;
 
 class CategoryController extends Controller
 {
@@ -21,6 +22,17 @@ class CategoryController extends Controller
 	{
 		// カテゴリーを取得
 		$categories = $this->category->getCategories(Auth::id());
+
+		return response()->json([
+			'status' => 200,
+			'categories' => $categories,
+		]);
+	}
+
+	public function detail(Request $request)
+	{
+		// カテゴリーを取得
+		$categories = $this->category->getCategory($request->input('category_id'), Auth::id());
 
 		return response()->json([
 			'status' => 200,

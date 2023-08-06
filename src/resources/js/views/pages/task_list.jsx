@@ -1,5 +1,6 @@
 import { React, useState, useEffect } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
+import { useQuery, useQueryClient } from '@tanstack/react-query';
 import { useParams, Link } from "react-router-dom";
 import { Checkbox, Button, Text } from '@mantine/core';
 import {
@@ -12,27 +13,56 @@ import { unwrapResult } from '@reduxjs/toolkit';
 import TaskAddModal from '../components/addTaskModal';
 import VariableLengthText from '../components/VariableLengthText';
 import { getTasks, doneTask, deleteTask } from '../../state/reducks/tasks/slices';
-import { getCategories } from '../../state/reducks/categories/slices';
 
 function TaskList() {
   const handleDrop = (newTaskData) => setTasks(newTaskData);
   const { categoryId } = useParams();
   const dispatch = useDispatch();
 
-  const categoryData = useSelector((state) => state.categories.list);
-  if (categoryData.length === 0) {
-    dispatch(getCategories());
-  }
+  const queryClient = useQueryClient();
+  const categories = queryClient.getQueryData(['categories']);
+  if (!categories) {
+    const { isLoading, data, isError, error } = useQuery({ queryKey: ['categories'], queryFn: async () => {
+      const response = await axios.get(`/api/category`, {}, {
+        headers: { 'Authorization': `Bearer ${localStorage.getItem('auth_token')}` },
+      });
 
-  const currentCategoryData = categoryData.find((category) => category.id === Number(categoryId)) ?? null;
+      return response.data.categories;
+    }});
+
+    if (isLoading) {
+      return <h2>Loading...</h2>;
+    }
+
+    if (isError) {
+      return <h2>{error.message}</h2>;
+    }
+
+    categories = data;
+  }
+  console.log(categories);
+
+  const currentCategoryData = categories.find((category) => category.id === Number(categoryId)) ?? null;
   const categoryImage = currentCategoryData ? currentCategoryData.base_64_image : null;
   const categoryName = currentCategoryData ? currentCategoryData.name : null;
 
-  const taskData = useSelector((state) => state.tasks.list);
+  const { isLoading, data, isError, error } = useQuery({ queryKey: ['tasks'], queryFn: async () => {
+    const response = await axios.get(`/api/task`, {
+      params: { category_id: categoryId }
+    }, {
+      headers: { 'Authorization': `Bearer ${localStorage.getItem('auth_token')}` },
+    });
 
-  useEffect(() => {
-    dispatch(getTasks(categoryId));
-  }, []);
+    return response.data.tasks;
+  }});
+
+  if (isLoading) {
+    return <h2>Loading...</h2>;
+  }
+
+  if (isError) {
+    return <h2>{error.message}</h2>;
+  }
 
   const addTask= (event, text, parentId) => {
     event.preventDefault();
@@ -54,12 +84,12 @@ function TaskList() {
   const handleCheckTask = async (event, id, done) => {
     event.preventDefault();
     // フォームデータを作成
-    const data = new FormData();
-    data.append("id", id);
-    data.append("is_done", Number(done));
+    const formData = new FormData();
+    formData.append("id", id);
+    formData.append("is_done", Number(done));
 
     try {
-      const result = await dispatch(doneTask(data));
+      const result = await dispatch(doneTask(formData));
 
       if (unwrapResult(result) !== false) {
         console.log('change done');
@@ -111,11 +141,11 @@ function TaskList() {
         <div className="flex justify-end">
           <TaskAddModal parentId={0} categoryId={categoryId} addTask={addTask}/>
         </div>
-        {taskData === null
+        {data === null
           ? <></>
           :
         <Tree
-          tree = {taskData}
+          tree = {data}
           rootId = {0}
           onDrop = {handleDrop}
           classes = {{
