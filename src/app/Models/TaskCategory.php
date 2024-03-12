@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use App\Models\Task;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Facades\Storage;
@@ -22,7 +23,18 @@ class TaskCategory extends Model
         'created_at',
     ];
 
-    protected $appends = ['base_64_image'];
+    protected $appends = [
+        'base_64_image',
+        //'count_is_open_task',
+    ];
+
+    /**
+     * カテゴリーに紐づくタスクを取得
+     */
+    public function tasks()
+    {
+        return $this->hasMany(Task::class, 'category_id');
+    }
 
     /**
      * Base64 形式の画像を返す
@@ -49,7 +61,7 @@ class TaskCategory extends Model
     public function getCategories(int $userId): Collection
     {
         try {
-            $categories = $this->where('user_id', $userId)->get();
+            $categories = $this->where('user_id', $userId)->withCount('tasks')->get();
         } catch (\Exception $e) {
             report($e);
         }
