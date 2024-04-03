@@ -89,7 +89,7 @@ export const categoriesSlice = createSlice({
       state.loading = true;
     },
     [addCategory.fulfilled]: (state, action) => {
-      console.log('added');
+      console.log('category added');
       state.loading = true;
       if (action.payload !== false) {
         const newList = state.list.concat(

@@ -1,45 +1,62 @@
 import { useState } from 'react';
 import { useSelector, useDispatch } from 'react-redux'
 import { useInputState, getHotkeyHandler, useDisclosure } from '@mantine/hooks';
+import { useMutation, useQueryClient } from '@tanstack/react-query';
 import { notifications } from '@mantine/notifications';
 import { Input, Button } from '@mantine/core';
+import { connect } from "react-redux";
+import { unwrapResult } from '@reduxjs/toolkit';
+import { addTask } from '../../state/reducks/tasks/slices';
 
-const TaskAddForm = (props) => {
+let AddTask = (props) => {
   const [textValue, setTextValue] = useInputState('');
+  const [isSubmittable, setIsSubmittable] = useInputState(true);
+  const dispatch = useDispatch();
 
-  const addTask = (event) => {
-    const data2 = {'value': textValue};
-    props.onTaskClick(textValue);
-
-    return;
-    if (textValue === '') {
-      return;
-    }
-    event.preventDefault();
-
-    // フォームデータを作成
-    const data = new FormData();
-    data.append("parent_id", props.parentId);
-    data.append("category_id", props.categoryId);
-    data.append("text", textValue);
-
-    console.log(props.categoryId);
-    // ToDo を登録
-    axios.post(`/api/task/create`, data, {
+  // ToDo を登録
+  const addTask = (data) => {
+    return axios.post(`/api/task/create`, data, {
       headers: {
         'Content-Type': 'multipart/form-data',
         'Authorization': `Bearer ${localStorage.getItem('auth_token')}`,
       },
-    }).then(res => {
-      if (res.data.status === 200) {
-        props.addTask(event, res.data.task.text, res.data.task.parent_id);
-        setTextValue('');
-        close();
-      }
     });
   };
 
-	return (
+  const queryClient = useQueryClient();
+
+  const useAddTask = () => {
+    return useMutation(addTask);
+  };
+
+  const { mutate } = useAddTask();
+
+  const handleAddButton = async (event) => {
+    console.log("addaddadd");
+
+    if (textValue === '' || !isSubmittable) {
+      return;
+    }
+    setIsSubmittable(false);
+
+    const data = new FormData();
+    data.append("parent_id", props.parentId);
+    data.append("category_id", props.categoryId);
+    data.append("text", textValue);
+    console.log(data);
+
+    mutate(data, {
+      onSuccess: (data) => {
+        console.log("Success add Category");
+        queryClient.invalidateQueries(['tasks']);
+        setTextValue('');
+        props.done();
+        setIsSubmittable(true);
+      },
+    });
+  };
+
+  return (
     <div className='flex flex-row justify-between'>
       <Input
         icon={
@@ -52,14 +69,15 @@ const TaskAddForm = (props) => {
         className='grow mr-2'
         placeholder="What your to-do?"
         onKeyDown={getHotkeyHandler([
-          ['Enter', (event)=>addTask(event)],
+          ['Enter', (event)=>handleAddButton(event)],
         ])}
       />
-      <Button color="cyan" onClick={(event)=>addTask(event)} disabled={textValue === ''}>
+      <Button color="cyan" onClick={(event)=>handleAddButton(event)} disabled={textValue === '' && isSubmittable}>
         Add
       </Button>
     </div>
   );
 };
+AddTask = connect()(AddTask);
 
-export default TaskAddForm;
+export default AddTask;

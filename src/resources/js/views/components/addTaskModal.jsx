@@ -1,6 +1,6 @@
 import { useInputState, useDisclosure } from '@mantine/hooks';
 import { Modal } from '@mantine/core';
-import AddTaskForm from '../containers/addTaskForm';
+import AddTaskForm from '../components/addTaskForm';
 
 const TaskAddModal = (props) => {
   const [opened, { open, close }] = useDisclosure(false);

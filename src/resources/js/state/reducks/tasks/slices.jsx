@@ -92,7 +92,7 @@ export const tasksSlice = createSlice({
       state.loading = true;
     },
     [addTask.fulfilled]: (state, action) => {
-      console.log('added');
+      console.log('task added');
       state.loading = true;
       if (action.payload !== false) {
         const newList = state.list.concat(

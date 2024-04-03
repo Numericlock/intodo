@@ -1,6 +1,7 @@
 import { React, useState, useEffect } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
-import { useQuery, useQueryClient } from '@tanstack/react-query';
+import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
+import { useInputState, getHotkeyHandler, useDisclosure } from '@mantine/hooks';
 import { useParams, Link } from "react-router-dom";
 import { Checkbox, Button, Text } from '@mantine/core';
 import {
@@ -40,7 +41,6 @@ function TaskList() {
 
     categories = data;
   }
-  console.log(categories);
 
   const currentCategoryData = categories.find((category) => category.id === Number(categoryId)) ?? null;
   const categoryImage = currentCategoryData ? currentCategoryData.base_64_image : null;
@@ -64,7 +64,47 @@ function TaskList() {
     return <h2>{error.message}</h2>;
   }
 
-  const addTask= (event, text, parentId) => {
+  // ToDo を登録
+  const addTask = (data) => {
+    return axios.post(`/api/task/create`, data, {
+      headers: {
+        'Content-Type': 'multipart/form-data',
+        'Authorization': `Bearer ${localStorage.getItem('auth_token')}`,
+      },
+    });
+  };
+
+  const useAddTask = () => {
+    //return useMutation(addTask);
+  };
+
+  //const { mutate } = useAddTask();
+
+  const handleAddButton = async (event) => {
+    console.log("addaddadd");
+
+    if (textValue === '' || !isSubmittable) {
+      return;
+    }
+    setIsSubmittable(false);
+
+    const data = new FormData();
+    data.append("name", textValue);
+
+    mutate(data, {
+      onSuccess: (data) => {
+        console.log("Success add Category");
+        queryClient.invalidateQueries(['tasks']);
+        close();
+        clearFile();
+        setTextValue('');
+        setIsSubmittable(true);
+      },
+    });
+  };
+
+  /*
+  const handleAddButton2 = (event, text, parentId) => {
     event.preventDefault();
 
     var id = taskData.map(function (p) {
@@ -79,6 +119,7 @@ function TaskList() {
       "done": false
     }]));
   };
+  */
 
   // チェックボックスの状態を更新する
   const handleCheckTask = async (event, id, done) => {
@@ -139,7 +180,7 @@ function TaskList() {
       </div>
       <DndProvider backend={MultiBackend} options={getBackendOptions()}>
         <div className="flex justify-end">
-          <TaskAddModal parentId={0} categoryId={categoryId} addTask={addTask}/>
+          <TaskAddModal parentId={0} categoryId={categoryId} addTask={handleAddButton}/>
         </div>
         {data === null
           ? <></>
@@ -183,7 +224,7 @@ function TaskList() {
                       <path strokeLinecap="round" strokeLinejoin="round" d="M14.74 9l-.346 9m-4.788 0L9.26 9m9.968-3.21c.342.052.682.107 1.022.166m-1.022-.165L18.16 19.673a2.25 2.25 0 01-2.244 2.077H8.084a2.25 2.25 0 01-2.244-2.077L4.772 5.79m14.456 0a48.108 48.108 0 00-3.478-.397m-12 .562c.34-.059.68-.114 1.022-.165m0 0a48.11 48.11 0 013.478-.397m7.5 0v-.916c0-1.18-.91-2.164-2.09-2.201a51.964 51.964 0 00-3.32 0c-1.18.037-2.09 1.022-2.09 2.201v.916m7.5 0a48.667 48.667 0 00-7.5 0" />
                     </svg>
                   </span>
-                : <TaskAddModal parentId={node.id} categoryId={categoryId} addTask={addTask} key={node.id}/>
+                : <TaskAddModal parentId={node.id} categoryId={categoryId} addTask={handleAddButton} key={node.id}/>
               }</div>
             </div>
           )}

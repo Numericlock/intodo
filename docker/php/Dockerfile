@@ -11,3 +11,5 @@ RUN apk add git nodejs npm
 
 # install php extensions
 RUN docker-php-ext-install pdo pdo_mysql
+
+RUN npm run dev
