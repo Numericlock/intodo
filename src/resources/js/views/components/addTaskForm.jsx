@@ -11,7 +11,6 @@ import { addTask } from '../../state/reducks/tasks/slices';
 let AddTask = (props) => {
   const [textValue, setTextValue] = useInputState('');
   const [isSubmittable, setIsSubmittable] = useInputState(true);
-  const dispatch = useDispatch();
 
   // ToDo を登録
   const addTask = (data) => {
@@ -32,8 +31,6 @@ let AddTask = (props) => {
   const { mutate } = useAddTask();
 
   const handleAddButton = async (event) => {
-    console.log("addaddadd");
-
     if (textValue === '' || !isSubmittable) {
       return;
     }
@@ -43,11 +40,9 @@ let AddTask = (props) => {
     data.append("parent_id", props.parentId);
     data.append("category_id", props.categoryId);
     data.append("text", textValue);
-    console.log(data);
 
     mutate(data, {
       onSuccess: (data) => {
-        console.log("Success add Category");
         queryClient.invalidateQueries(['tasks']);
         setTextValue('');
         props.done();

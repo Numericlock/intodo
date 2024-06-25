@@ -134,7 +134,7 @@ function App() {
                   <Routes>
                     <Route path="/login" element={<Login />} />
                     <Route path="/register" element={<Register />} />
-                    <Route path="/task/index" element={<Home />} />
+                    <Route path="/" element={<Home />} />
                     <Route path="/category" element={<CategoryList />} />
                     <Route path="/category/:categoryId/task" element={<TaskList />} />
                   </Routes>

@@ -1,5 +1,14 @@
+import {Link, useNavigate} from 'react-router-dom';
+
 function Home() {
-  return <h2>Home</h2>;
+  return (
+    <div>
+      <h2>Home</h2>
+      <Link to="/category">
+        <span>category</span>
+      </Link>
+    </div>
+  );
 }
 
 export default Home;
