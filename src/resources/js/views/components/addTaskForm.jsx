@@ -1,12 +1,6 @@
-import { useState } from 'react';
-import { useSelector, useDispatch } from 'react-redux'
 import { useInputState, getHotkeyHandler, useDisclosure } from '@mantine/hooks';
 import { useMutation, useQueryClient } from '@tanstack/react-query';
-import { notifications } from '@mantine/notifications';
 import { Input, Button } from '@mantine/core';
-import { connect } from "react-redux";
-import { unwrapResult } from '@reduxjs/toolkit';
-import { addTask } from '../../state/reducks/tasks/slices';
 
 let AddTask = (props) => {
   const [textValue, setTextValue] = useInputState('');
@@ -36,17 +30,21 @@ let AddTask = (props) => {
     }
     setIsSubmittable(false);
 
+    // フォームデータを作成
     const data = new FormData();
     data.append("parent_id", props.parentId);
     data.append("category_id", props.categoryId);
     data.append("text", textValue);
 
     mutate(data, {
-      onSuccess: (data) => {
+      onSuccess: () => {
         queryClient.invalidateQueries(['tasks']);
         setTextValue('');
         props.done();
         setIsSubmittable(true);
+      },
+      onError: (error) => {
+        console.error('Error registering data:', error);
       },
     });
   };
@@ -73,6 +71,5 @@ let AddTask = (props) => {
     </div>
   );
 };
-AddTask = connect()(AddTask);
 
 export default AddTask;

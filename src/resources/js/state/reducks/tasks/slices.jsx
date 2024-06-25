@@ -15,22 +15,6 @@ export const getTasks = createAsyncThunk('tasks/getTasks', async (categoryId) =>
   });
 });
 
-export const addTask = createAsyncThunk('tasks/addTask', async (data) => {
-  // ToDo を登録
-  return await axios.post(`/api/task/create`, data, {
-    headers: {
-      'Content-Type': 'multipart/form-data',
-      'Authorization': `Bearer ${localStorage.getItem('auth_token')}`,
-    },
-  }).then(res => {
-    if (res.data.status !== 200) {
-      return false;
-    }
-
-    return res.data.task;
-  });
-});
-
 export const doneTask = createAsyncThunk('tasks/doneTask', async (data) => {
   // ToDo を完了させる、または未完了に戻す
   return await axios.post(`/api/task/done`, data, {
@@ -82,27 +66,6 @@ export const tasksSlice = createSlice({
       state.list = action.payload;
     },
     [getTasks.rejected]: (state) => {
-      console.log('error');
-      state.loading = false;
-      state.error = true;
-    },
-
-    [addTask.pending]: (state) => {
-      console.log('loading');
-      state.loading = true;
-    },
-    [addTask.fulfilled]: (state, action) => {
-      console.log('task added');
-      state.loading = true;
-      if (action.payload !== false) {
-        const newList = state.list.concat(
-          action.payload,
-        );
-
-        state.list = newList;
-      }
-    },
-    [addTask.rejected]: (state) => {
       console.log('error');
       state.loading = false;
       state.error = true;
