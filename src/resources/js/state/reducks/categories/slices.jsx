@@ -28,22 +28,6 @@ export const addCategory = createAsyncThunk('categories/addCategory', async (dat
   });
 });
 
-export const doneTask = createAsyncThunk('tasks/doneTask', async (data) => {
-  // ToDo を完了させる、または未完了に戻す
-  return await axios.post(`/api/task/done`, data, {
-    headers: {
-      'Content-Type': 'multipart/form-data',
-      'Authorization': `Bearer ${localStorage.getItem('auth_token')}`,
-    },
-  }).then(res => {
-    if (res.data.status !== 200) {
-      return false;
-    }
-
-    return res.data.task;
-  });
-});
-
 export const deleteTask = createAsyncThunk('tasks/deleteTask', async (data) => {
   // ToDo を完了させる、または未完了に戻す
   return await axios.post(`/api/task/delete`, data, {
@@ -100,36 +84,6 @@ export const categoriesSlice = createSlice({
       }
     },
     [addCategory.rejected]: (state) => {
-      console.log('error');
-      state.loading = false;
-      state.error = true;
-    },
-
-    [doneTask.pending]: (state) => {
-      console.log('loading');
-      state.loading = true;
-    },
-    [doneTask.fulfilled]: (state, action) => {
-      state.loading = false;
-      if (action.payload !== false) {
-        let newList = state.list;
-
-        // 更新されたタスクのIDから state のインデックスと特定し、完了有無を更新する
-        action.payload.forEach((payload) => {
-          const index = state.list.findIndex(({id}) => id === payload.id)
-
-          // 検索に引っ掛からなかった場合はスルー
-          if (index !== -1) {
-            newList[index].done = payload.done;
-          }
-        })
-
-        state.list = newList;
-      }
-
-      console.log('changed');
-    },
-    [doneTask.rejected]: (state) => {
       console.log('error');
       state.loading = false;
       state.error = true;

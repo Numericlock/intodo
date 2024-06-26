@@ -96,7 +96,6 @@ const halfCharMap = {
 
 const textCountByByte = (str) => {
   let count = 0;
-  console.log(str);
   if (str) {
     for (let i = 0; i < 4; i++) {
       const halfChar = Object.keys(halfCharMap).find((e) => e === str[i]);
@@ -113,7 +112,6 @@ const textCountByByte = (str) => {
 }
 
 const VariableLengthText = (props) => {
-  console.log(props);
   return (
     <>
       <p style={{fontSize: `clamp(48px, ${100 / textCountByByte(props.text) / 2}vw, 56px)`}}>{props.text}</p>

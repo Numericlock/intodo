@@ -12,8 +12,9 @@ import {
 import { DndProvider } from "react-dnd";
 import { unwrapResult } from '@reduxjs/toolkit';
 import TaskAddModal from '../components/addTaskModal';
+import DoneTaskForm from '../components/doneTaskForm';
 import VariableLengthText from '../components/VariableLengthText';
-import { getTasks, doneTask, deleteTask } from '../../state/reducks/tasks/slices';
+import { getTasks, deleteTask } from '../../state/reducks/tasks/slices';
 
 function TaskList() {
   const handleDrop = (newTaskData) => setTasks(newTaskData);
@@ -46,7 +47,7 @@ function TaskList() {
   const categoryImage = currentCategoryData ? currentCategoryData.base_64_image : null;
   const categoryName = currentCategoryData ? currentCategoryData.name : null;
 
-  const { isLoading, data, isError, error } = useQuery({ queryKey: ['tasks'], queryFn: async () => {
+  const { isLoading, data, isError, error } = useQuery({ queryKey: ['tasks', categoryId], queryFn: async () => {
     const response = await axios.get(`/api/task`, {
       params: { category_id: categoryId }
     }, {
@@ -63,27 +64,6 @@ function TaskList() {
   if (isError) {
     return <h2>{error.message}</h2>;
   }
-
-  // チェックボックスの状態を更新する
-  const handleCheckTask = async (event, id, done) => {
-    event.preventDefault();
-    // フォームデータを作成
-    const formData = new FormData();
-    formData.append("id", id);
-    formData.append("is_done", Number(done));
-
-    try {
-      const result = await dispatch(doneTask(formData));
-
-      if (unwrapResult(result) !== false) {
-        console.log('change done');
-      } else {
-        console.error('Failed to add the task');
-      }
-    } catch (err) {
-      console.error('Failed to save the post: ', err)
-    }
-  };
 
   // タスクを削除する
   const handleTrashButton = async (event, id) => {
@@ -149,17 +129,7 @@ function TaskList() {
                     </svg>
                 }</span>
               )}
-              <Checkbox
-                className = 'ml-2 grow'
-                color = "gray"
-                checked = {node.done}
-                onChange = {(event) => handleCheckTask(event, node.id, event.currentTarget.checked)}
-                label = {
-                  <>
-                    <span style={{ textDecoration: node.done ? 'line-through' : 'none' }}>{node.text}</span>
-                  </>
-                }
-              />
+              <DoneTaskForm taskId={node.id} categoryId={categoryId} isDone={node.done} text={node.text} key={node.id}/>
               <div className={`rounded-md duration-200 ${node.done ? 'hover:bg-red-500' : 'hover:bg-teal-50'}`}>{
                 node.done
                 ? <span className='text-red-500 hover:text-white duration-200' onClick={(event) => handleTrashButton(event, node.id)}>

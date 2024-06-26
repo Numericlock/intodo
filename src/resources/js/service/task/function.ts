@@ -2,6 +2,9 @@ import axios from "axios";
 import { GetTasksResponse } from "./type";
 
 export const getTasks = async (): Promise<GetTasksResponse> => {
-  const res = await axios.get("https://jsonplaceholder.typicode.com/posts");
-  return res.data;
+  const response = await axios.get(`/api/category`, {
+    headers: { 'Authorization': `Bearer ${localStorage.getItem('auth_token')}` },
+  });
+
+  return response.data.categories;
 };
