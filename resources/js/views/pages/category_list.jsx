@@ -37,7 +37,7 @@ function CategoryList() {
         break;
       }
 
-      categoriesData.push(<CategoryTile to={category.id + '/task'} name={category.name} image={category.base_64_image} key={index}></CategoryTile>);
+      categoriesData.push(<CategoryTile to={category.id + '/task'} num={category.tasks_count} name={category.name} image={category.base_64_image} key={index}></CategoryTile>);
     }
   }
 

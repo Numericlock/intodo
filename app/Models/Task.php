@@ -1,14 +1,15 @@
 <?php
 namespace App\Models;
 
+use App\Casts\NullCast;
+use App\Models\TaskCategory;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Database\Eloquent\Model;
-use Illuminate\Support\Collection as SupportCollection;
 use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
-use Staudenmeir\LaravelAdjacencyList\Eloquent\HasRecursiveRelationships;
 
-use App\Casts\NullCast;
+use Illuminate\Support\Collection as SupportCollection;
+use Staudenmeir\LaravelAdjacencyList\Eloquent\HasRecursiveRelationships;
 
 class Task extends Model
 {
@@ -32,6 +33,14 @@ class Task extends Model
   public function recursiveTask()
   {
       return $this->hasManyOfDescendantsAndSelf(Task::class);
+  }
+
+  /**
+   * タスクに紐づくカテゴリーを取得
+   */
+  public function category()
+  {
+      return $this->belongsTo(TaskCategory::class, 'category_id');
   }
 
   /**
